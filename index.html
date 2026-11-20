@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="he" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shani's Birthday</title>
+<meta name="description" content="Happy Birthday Shani">
+<meta property="og:title" content="Shani's Birthday">
+<meta property="og:description" content="Happy Birthday Shani">
+<meta property="og:type" content="website">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Play">
+<meta name="theme-color" content="#08111c">
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://api.deezer.com" crossorigin>
+<link rel="preconnect" href="https://cdnt-preview.dzcdn.net" crossorigin>
+<link rel="preconnect" href="https://itunes.apple.com" crossorigin>
+<link rel="preconnect" href="https://audio-ssl.itunes.apple.com" crossorigin>
+<link rel="dns-prefetch" href="https://api.deezer.com">
+<link rel="dns-prefetch" href="https://cdnt-preview.dzcdn.net">
+<link rel="dns-prefetch" href="https://itunes.apple.com">
+<link rel="dns-prefetch" href="https://audio-ssl.itunes.apple.com">
+<style>
+  :root {
+    --bg0: #08111c;
+    --bg1: #0c2a2c;
+    --bg2: #15204a;
+    --teal: #2dd4bf;
+    --teal-deep: #0f766e;
+    --gold: #f3c56b;
+    --pink: #f472b6;
+    --ink: #f7f4ee;
+    --muted: rgba(247,244,238,.62);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; min-height: 100%; background: var(--bg0); color: var(--ink); }
+  body {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 22px calc(28px + env(safe-area-inset-bottom));
+    font-family: ui-rounded, "Segoe UI", "SF Pro Display", "Helvetica Neue", "Noto Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    background:
+      radial-gradient(900px 520px at 12% -8%, rgba(244,114,182,.20), transparent 55%),
+      radial-gradient(820px 480px at 100% 0%, rgba(243,197,107,.16), transparent 50%),
+      radial-gradient(900px 600px at 90% 110%, rgba(37,99,235,.28), transparent 52%),
+      radial-gradient(700px 500px at 0% 100%, rgba(45,212,191,.20), transparent 50%),
+      linear-gradient(165deg, var(--bg0) 0%, var(--bg1) 48%, var(--bg2) 100%);
+    overflow: hidden;
+  }
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin: 0 0 16px;
+  }
+  .hero { text-align: center; margin-bottom: 28px; max-width: 22rem; }
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(1.7rem, 7.4vw, 2.15rem);
+    font-weight: 700;
+    letter-spacing: -.01em;
+    line-height: 1.35;
+    color: #fffaf3;
+    text-shadow: 0 8px 30px rgba(0,0,0,.25);
+  }
+  .hero .en {
+    margin: 8px 0 0;
+    font-size: clamp(1rem, 4.2vw, 1.15rem);
+    font-weight: 500;
+    color: var(--gold);
+  }
+  .stage {
+    position: relative;
+    width: min(78vw, 300px);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+  }
+  .vinyl {
+    position: absolute;
+    width: 78%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%, #f8e7c7 0 11%, #c9a36a 12%, #1a1d24 13%, #1a1d24 100%);
+    box-shadow:
+      0 22px 50px rgba(0,0,0,.4),
+      0 0 0 1px rgba(243,197,107,.18),
+      inset 0 0 0 10px #0d0f14,
+      inset 0 0 40px rgba(45,212,191,.12);
+    pointer-events: none;
+  }
+  .vinyl::before {
+    content: "";
+    position: absolute; inset: 12%;
+    border-radius: 50%;
+    background: repeating-radial-gradient(circle at 50% 50%,
+      rgba(255,255,255,.05) 0 1px,
+      transparent 2px 6px);
+    opacity: .55;
+  }
+  .vinyl::after {
+    content: "";
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255,255,255,.16), transparent 42%, rgba(45,212,191,.08) 70%, transparent);
+  }
+  .stage.is-playing .vinyl { animation: spin 3.6s linear infinite; }
+  .ring {
+    position: absolute; inset: 2.5%;
+    transform: rotate(-90deg);
+    pointer-events: none;
+    overflow: visible;
+  }
+  .ring circle { fill: none; stroke-linecap: round; }
+  .ring .track { stroke: rgba(255,255,255,.12); stroke-width: 5; }
+  .ring .prog {
+    stroke: url(#ringGrad);
+    stroke-width: 5;
+    stroke-linecap: butt;
+    stroke-dasharray: 0 1000;
+    filter: drop-shadow(0 0 5px rgba(45,212,191,.55));
+  }
+  .play {
+    position: relative;
+    z-index: 2;
+    width: 132px; height: 132px;
+    border: 0; border-radius: 50%;
+    background: linear-gradient(180deg, #fffdf8, #efe3c8);
+    color: #14262a;
+    display: grid; place-items: center;
+    cursor: pointer;
+    box-shadow:
+      0 14px 30px rgba(0,0,0,.28),
+      0 0 0 7px rgba(45,212,191,.12);
+    transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+    touch-action: manipulation;
+  }
+  .play:active { transform: scale(.96); }
+  .play.ready:not(.playing) { animation: pulse 2.4s ease-in-out infinite; }
+  .play.loading { filter: saturate(.75); }
+  .play svg { width: 50px; height: 50px; display: block; }
+  .play .pause, .play .eq { display: none; }
+  .play.playing .play-icon { display: none; }
+  .play.playing .pause { display: none; }
+  .play.playing .eq { display: flex; }
+  .eq {
+    width: 52px; height: 42px;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+  }
+  .eq i {
+    display: block;
+    width: 5px;
+    height: 40%;
+    border-radius: 3px;
+    background: linear-gradient(180deg, var(--teal-deep), #1e3a8a);
+    transform-origin: bottom;
+  }
+  .stage.is-playing .eq i { animation: bar 0.85s ease-in-out infinite; }
+  .eq i:nth-child(1) { animation-delay: -0.4s; height: 45%; }
+  .eq i:nth-child(2) { animation-delay: -0.15s; height: 80%; }
+  .eq i:nth-child(3) { animation-delay: -0.55s; height: 100%; }
+  .eq i:nth-child(4) { animation-delay: -0.05s; height: 70%; }
+  .eq i:nth-child(5) { animation-delay: -0.3s; height: 50%; }
+  .row { margin-top: 22px; display: flex; gap: 14px; align-items: center; }
+  .icon-btn {
+    width: 50px; height: 50px;
+    border: 0; border-radius: 50%;
+    background: rgba(255,255,255,.08);
+    color: var(--ink);
+    cursor: pointer;
+    display: grid; place-items: center;
+    backdrop-filter: blur(8px);
+    touch-action: manipulation;
+  }
+  .icon-btn:active { transform: scale(.96); }
+  .icon-btn svg { width: 22px; height: 22px; }
+  .status {
+    margin-top: 18px;
+    min-height: 1.35em;
+    font-size: 14px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .status.error { color: #fca5a5; }
+  .hint {
+    margin-top: 6px;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(247,244,238,.38);
+  }
+  #confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 8; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 14px 30px rgba(0,0,0,.28), 0 0 0 7px rgba(45,212,191,.12); }
+    50% { box-shadow: 0 14px 30px rgba(0,0,0,.28), 0 0 0 12px rgba(45,212,191,.22); }
+  }
+  @keyframes bar {
+    0%, 100% { transform: scaleY(.45); }
+    50% { transform: scaleY(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stage.is-playing .vinyl, .play.ready:not(.playing), .stage.is-playing .eq i { animation: none; }
+  }
+</style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+  <div class="eyebrow">Shani's Birthday</div>
+  <div class="hero">
+    <h1 lang="he" dir="rtl">יום הולדת שמח שני</h1>
+    <p class="en">Happy Birthday Shani 🎂</p>
+  </div>
+  <div class="stage" id="stage">
+    <div class="vinyl" aria-hidden="true"></div>
+    <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+      <defs>
+        <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#2dd4bf"/>
+          <stop offset="50%" stop-color="#f3c56b"/>
+          <stop offset="100%" stop-color="#f472b6"/>
+        </linearGradient>
+      </defs>
+      <circle class="track" cx="60" cy="60" r="54"></circle>
+      <circle class="prog" cx="60" cy="60" r="54"></circle>
+    </svg>
+    <button class="play" id="play" type="button" aria-label="Play / נגן">
+      <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14z"/></svg>
+      <svg class="pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7V5zm6.5 0H17v14h-3.5V5z"/></svg>
+      <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+    </button>
+  </div>
+  <div class="row">
+    <button class="icon-btn" id="replay" type="button" aria-label="Replay / נגן שוב">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>
+      </svg>
+    </button>
+  </div>
+  <div class="status" id="status"></div>
+  <div class="hint">30s</div>
+<script>
+const TRACKS = {"SRaT7":"d736762852","rdorK":"d2191255777","4GLxY":"d1132731952","C7cnd":"d560937322","6fUR9":"d2191255807","ggzQi":"d2192941757","7uqYK":"d2191255877","hwCHN":"d608820","tPVi9":"d15210161","fw8cN":"d13132946","DmByW":"d2800862","v2pjG":"d691527862","SMviB":"d7216934","8pFPr":"d7216938","SkLyX":"d6075293","EPezo":"d1090508912","VVxAu":"d849698","ZQLXe":"d5167557","83W9e":"d2193471","4g5wz":"d912352","sgmCb":"d837920","SLpPT":"d3099009","YFy3m":"d83925031","GUCBs":"d736724542","Qwkni":"d1663983562","nmi8h":"d15626764","fJeE6":"d15587471","tHLxz":"d736724512","8fp8K":"d85586798","gmrqa":"d736764102","Qd8rJ":"d65638419","FeQzM":"d113218698","8ks4N":"d75779409","xmjwt":"d621192032","6QiXE":"d1510251382","LwDZd":"d88845663","GzLRr":"d4254346","c2TEA":"d621092012","bF6Jr":"d1615278762","9WWmt":"d60200391","ThpP7":"d1140884892","vXq5Z":"d92739388","ARoNR":"d550269982","BewRv":"i1610884007","JLrRT":"d117990118","rnniW":"d560840722","HHjW3":"d560840652","WZFx7":"d783258932","sSz5a":"d1053921842","R3PWr":"d79105477","KpngA":"d81342412","XiPuH":"d127698997","jwcQo":"d736761282","svHck":"d13975778","Y6XPg":"d830880","f6kpk":"d116348616","VTi4q":"d1680798827","K84n3":"d1761245817","6Xjsw":"d1109326","pBcB5":"d669120","VpRba":"d7473866","2HNFY":"d14640080","6354V":"d764920","G9pz5":"d134116940","3KKgc":"d1405841332","aM8tW":"d6581098","LLH2m":"d1445506692","LnUzy":"d145434430","BnEDW":"d2301122","tSqyZ":"d4952834","ZaFX9":"d549341372","5gcme":"d13131811","gevWJ":"d3091990","xgw4M":"d3586841","XmhMB":"d621205002","i2Jqh":"d4623157","67FsD":"d560504","544SZ":"d84791555","VCiph":"d8146779","dEwxV":"d6821060","rGsJB":"d15275128","Ps74k":"d670900","pzZZh":"d4234099","HVEJj":"d620746922","MKdWg":"d718097","XSAFr":"d733720432","Zx4ig":"d1653693922","tynHM":"d1985612677","gTcDT":"d2319296","4ndFu":"d2124276","iofwu":"d7590577","UfJVJ":"d84885585","Reuhp":"d2607667","qu3NB":"d86391911","XxsFZ":"d68095470","YPHC6":"d2641790182","kVHKy":"d1398921942","aJpTj":"d1562649","dkNwX":"d4162123","78SVZ":"d3923820","TQYHi":"d88423191","wEXb7":"d538693822","9uZxG":"d105281106","ecnht":"d904747","Scbii":"d1643712752","DyCRv":"d373925941","AyN6d":"d1660694242","2842x":"i320308531","29YSb":"d73638230","yRr4i":"d904696","P8vY9":"d91084411","TYsY7":"d14640079","A7S73":"d4307728","PHnkF":"d3875722","53ChF":"d400419002","nX5NP":"d927900","heDtc":"d3173745","CmDqR":"d475334082","oHfbF":"d1582154","d2kno":"d3474914041","KAgNR":"d1074434392","CACb9":"d109300764","ckihm":"d1866481967","tijxy":"d2237941157","Dej3c":"d2607675","LCqSK":"d684048","iEwqb":"d3166541","CqhGy":"d3607485","mEmgk":"d3169190","MVCHr":"d725235","6Q9sF":"d435837422","ghKko":"d12818309","B6KsV":"d506947752","fQSkr":"d92739396","nbg6M":"d540509042","f65AB":"d25323751","x8Xcu":"d95965912","s3sRN":"d1014816612","PPatS":"d12809317","yhfer":"d407643932","Jy8Xj":"d136168640","XzBuD":"d760429572","p9nmz":"d2174201587","fL2xe":"d1784610997","rfnnt":"d657816322","Sc2UD":"d6071038","sUjGC":"d560848172","7MmDJ":"d1241243232","obVqo":"d1040918","MpKsA":"d798973092","xKvUZ":"d10101839","ybYT9":"d74513898","x89b2":"d15435398","pW6k8":"d1030403","rDJ8L":"d3838467901","VGmoE":"d126368853","E3FZC":"d2606168","2SVYZ":"d3217360611","jGiLT":"d4192218","xsV9C":"d3750761902","XTeq2":"d3173749","u8bfq":"d84791581","dgiXv":"d1761480947","NtBUP":"d539193232","8vmjX":"d138539759","3PAeH":"d545938","boFLu":"d713030032","yXJkX":"d538693722","XkH5J":"d1559400","sJrc4":"d1136064","ZYvdv":"d608696302","fHLrR":"i1415198302","rf4nc":"d1793508247","jB2MV":"d13129881","iUYQd":"d536141692","W48Hp":"d1033711402","bqohu":"d71469184","2W94m":"d1121731192","ZCWUV":"d612006","x2ZwC":"d3166955","9LuTR":"d620812252","EXkHz":"d2530801451","AKRfR":"d966623","vJytk":"d3785931332","vm4Vj":"d404235892","pRVEy":"d2813004","k8BQy":"d1856616207","Reeig":"d2865741572","3oQ9y":"d15188933","iUrBS":"i1754031516","WedJV":"d970192","3B5kY":"d13788567","7hYsC":"d2043943","KAHCH":"d538709582","W2QWg":"d116348176","NUXr2":"d144389132","hfRC7":"d1771352017","NbKMS":"d829783","U7Exw":"d1115698432","3BdoE":"d608696402","M9CF5":"d1579787","xNPks":"d24271581","Q6NKj":"d732308812","CNabn":"d830099302","zMiVM":"d627134","V3hyh":"d116348212","GTgFg":"d1028134","ryvBz":"d68584634","zAo2H":"d6581084","BZac9":"d15586369","Angot":"d89760491","EKUBW":"d127699009","d4q3Z":"d6580968","mCKxw":"d73913666","XnRj3":"d2525863","D2np9":"d1040945","JtDMq":"d2525868","JyQxV":"d3616306","jz2D7":"d774817792","MGKMe":"d980115","XqHux":"d1113991","jS9zM":"d60725470","W9J7W":"d4709084","FV7sD":"d3788403772","7utji":"d361667781","5rcFV":"d3958362","hpPhg":"d116348378","LTtbU":"d690181","HWFsK":"d1793508177","aGWDW":"d14477354","jpBo7":"d6580946","gW3tQ":"d3844005691","NmDZE":"d765941","3o4Hm":"d3783010562","kCs3a":"d625765","AYB43":"d56890741","k8fGE":"d1131191","ZQMxW":"d3821908","ouxtS":"d3882658031","vqx5s":"d3475139191","5fixp":"d998966","9KFFW":"d124262714","Ajq57":"d5094211","A79fe":"d1700855247","5BMJQ":"d3607484","Qf7Ti":"d4359205322","35fCq":"d1033711352","CBXgA":"d5617957","CvEuU":"d4351552912","7vUEB":"d7453539","v5Ja3":"d2314412","qiZrg":"d107474516","3pbK3":"d378398071","ZFfHV":"d2572753642","BdNSh":"d719631","KSuHZ":"d97089706","GTczE":"d2526064","HbvXg":"d30301331","KQaA9":"d6581164","Z6JQn":"d2216644657","LSxNe":"d101941597","G7ExZ":"d2740770021","duNYn":"d2035069497","aWtiZ":"d677484","eTY4E":"d447073562","nj7jx":"d140307583","SRxQn":"d3782976412","nE6sd":"d1103312","7B9jU":"d540499072","7Cpnp":"d561855992","cejR2":"d1163924","LyDo9":"d68584691","Exjmi":"d114422258","7DjcP":"d542909862","gNqes":"d2301126","k2Xru":"i1675374302","Ld3BU":"d6581170","cbBMS":"d1444381112","q7qiJ":"d620747002","9aiV6":"d66789249","A39Lc":"d3844005561","uLEVT":"d15048957","gvHD8":"d718087","3D2tF":"d968745","iwWDX":"d3156285","wpT3m":"d3861719","szg2y":"d6580951","apAH3":"d5404452","xgvPr":"d104952372","7uJZZ":"d7523847","CRvYK":"d1711019","Ko7Wj":"d677475","m8Sgy":"d4242713","xstf5":"d3477754441","o8X8W":"d705100082","vm3jX":"d1163846","V64a2":"d943734102","mH65W":"d2525865","SpWwU":"d93329628"};
+const playBtn = document.getElementById("play");
+const replayBtn = document.getElementById("replay");
+const stage = document.getElementById("stage");
+const statusEl = document.getElementById("status");
+const prog = document.querySelector(".ring .prog");
+const circ = 2 * Math.PI * 54;
+prog.style.strokeDasharray = "0 " + circ;
+
+const params = new URLSearchParams(location.search);
+const code = (params.get("c") || "").trim();
+const token = TRACKS[code] || "";
+const audio = new Audio();
+audio.preload = "auto";
+audio.playsInline = true;
+audio.setAttribute("playsinline", "");
+audio.setAttribute("webkit-playsinline", "");
+
+const timing = { nav: performance.now(), jsonpStart: 0, urlReady: 0, canplay: 0, playing: 0 };
+window.__timing = timing;
+window.__audio = audio;
+
+let previewUrl = "";
+let prefetchErr = null;
+let loading = false;
+let confettiDone = false;
+let audioCtx = null;
+
+function setStatus(msg, isError) {
+  statusEl.textContent = msg || "";
+  statusEl.classList.toggle("error", !!isError);
+}
+function setPlaying(on) {
+  playBtn.classList.toggle("playing", on);
+  stage.classList.toggle("is-playing", on);
+  playBtn.setAttribute("aria-label", on ? "Pause / השהה" : "Play / נגן");
+}
+function setProgress(p) {
+  const v = Math.max(0, Math.min(1, p || 0));
+  prog.style.strokeDasharray = (v * circ) + " " + circ;
+  prog.style.strokeLinecap = v > 0.004 ? "round" : "butt";
+}
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const name = "cb_" + Math.random().toString(36).slice(2);
+    const s = document.createElement("script");
+    const t = setTimeout(() => { cleanup(); reject(new Error("timeout")); }, 12000);
+    function cleanup() {
+      clearTimeout(t);
+      s.remove();
+      try { delete window[name]; } catch (e) { window[name] = undefined; }
+    }
+    window[name] = (data) => { cleanup(); resolve(data); };
+    s.onerror = () => { cleanup(); reject(new Error("net")); };
+    s.src = url + (url.indexOf("?") >= 0 ? "&" : "?") + "callback=" + name;
+    document.head.appendChild(s);
+  });
+}
+async function fetchPreview() {
+  if (!token) throw new Error("missing");
+  const kind = token[0];
+  const id = token.slice(1);
+  timing.jsonpStart = performance.now();
+  if (kind === "d") {
+    const data = await jsonp("https://api.deezer.com/track/" + encodeURIComponent(id) + "?output=jsonp");
+    if (!data || data.error || !data.preview) throw new Error("noprev");
+    return data.preview;
+  }
+  if (kind === "i") {
+    const data = await jsonp("https://itunes.apple.com/lookup?id=" + encodeURIComponent(id));
+    const row = data && data.results && data.results[0];
+    if (!row || !row.previewUrl) throw new Error("noprev");
+    return row.previewUrl;
+  }
+  throw new Error("bad");
+}
+function armAudio(url) {
+  previewUrl = url;
+  if (audio.src !== url) audio.src = url;
+  try { audio.preload = "auto"; audio.load(); } catch (e) {}
+  if (!timing.urlReady) timing.urlReady = performance.now();
+  playBtn.classList.add("ready");
+}
+const prefetchPromise = (async () => {
+  if (!token) return "";
+  try {
+    const url = await fetchPreview();
+    armAudio(url);
+    return url;
+  } catch (e) {
+    prefetchErr = e;
+    throw e;
+  }
+})();
+
+audio.addEventListener("canplay", () => { if (!timing.canplay) timing.canplay = performance.now(); });
+audio.addEventListener("canplaythrough", () => { if (!timing.canplay) timing.canplay = performance.now(); });
+audio.addEventListener("playing", () => { if (!timing.playing) timing.playing = performance.now(); });
+audio.addEventListener("timeupdate", () => {
+  const d = audio.duration;
+  if (d && isFinite(d)) setProgress(audio.currentTime / d);
+});
+audio.addEventListener("ended", () => { setPlaying(false); setProgress(1); });
+audio.addEventListener("pause", () => { if (!audio.ended) setPlaying(false); });
+
+function burstConfetti() {
+  if (confettiDone) return;
+  confettiDone = true;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const c = document.getElementById("confetti");
+  const ctx = c.getContext("2d");
+  const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  const W = c.width = Math.floor(innerWidth * dpr);
+  const H = c.height = Math.floor(innerHeight * dpr);
+  c.style.width = innerWidth + "px";
+  c.style.height = innerHeight + "px";
+  const colors = ["#2dd4bf", "#f3c56b", "#f472b6", "#a78bfa", "#38bdf8", "#fff6e8", "#fb7185"];
+  const parts = [];
+  const cx = W / 2, cy = H * 0.42;
+  for (let i = 0; i < 70; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const v = 3.2 + Math.random() * 6.5;
+    parts.push({
+      x: cx, y: cy,
+      vx: Math.cos(a) * v * dpr, vy: Math.sin(a) * v * dpr - 2 * dpr,
+      g: 0.11 * dpr, w: (3 + Math.random() * 5) * dpr,
+      h: (5 + Math.random() * 9) * dpr,
+      rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.35,
+      color: colors[i % colors.length], life: 1, kind: Math.random() < 0.45 ? "c" : "r"
+    });
+  }
+  const t0 = performance.now();
+  function frame(t) {
+    const dt = Math.min(32, t - (frame.lt || t)); frame.lt = t;
+    ctx.clearRect(0, 0, W, H);
+    let alive = false;
+    for (const p of parts) {
+      p.vy += p.g * dt / 16;
+      p.x += p.vx * dt / 16; p.y += p.vy * dt / 16; p.rot += p.vr;
+      p.life -= dt / 1400;
+      if (p.life <= 0) continue;
+      alive = true;
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      if (p.kind === "c") { ctx.beginPath(); ctx.arc(0, 0, p.w * 0.55, 0, Math.PI * 2); ctx.fill(); }
+      else { ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+    if (alive && performance.now() - t0 < 1800) requestAnimationFrame(frame);
+    else ctx.clearRect(0, 0, W, H);
+  }
+  requestAnimationFrame(frame);
+}
+
+async function unlock() {
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) {
+      audioCtx = audioCtx || new AC();
+      if (audioCtx.state === "suspended") await audioCtx.resume();
+    }
+  } catch (e) {}
+}
+
+function playWhenReady() {
+  const p = audio.play();
+  setPlaying(true);
+  setStatus("");
+  burstConfetti();
+  return p;
+}
+
+async function playClip() {
+  if (!token) { setStatus("חסר קוד · Missing code", true); return; }
+  if (loading) return;
+  if (previewUrl && !audio.paused && !audio.ended) {
+    audio.pause();
+    setPlaying(false);
+    return;
+  }
+  // Fast path: preview already armed — start audio in this tap, no await first.
+  if (previewUrl && audio.src && audio.src.indexOf("http") === 0 && !audio.ended) {
+    Promise.resolve(playWhenReady()).catch(() => { setPlaying(false); setStatus("לא ניתן לנגן · Can't play", true); });
+    return;
+  }
+  if (previewUrl && audio.ended) {
+    audio.currentTime = 0;
+    Promise.resolve(playWhenReady()).catch(() => { setPlaying(false); setStatus("לא ניתן לנגן · Can't play", true); });
+    return;
+  }
+  loading = true;
+  playBtn.classList.add("loading");
+  setStatus("…");
+  try {
+    await unlock();
+    if (!previewUrl) {
+      const url = await prefetchPromise.catch(() => fetchPreview());
+      armAudio(url);
+    } else if (audio.ended) {
+      audio.currentTime = 0;
+    }
+    await playWhenReady();
+  } catch (e) {
+    setPlaying(false);
+    setStatus("לא ניתן לנגן · Can't play", true);
+  } finally {
+    loading = false;
+    playBtn.classList.remove("loading");
+  }
+}
+
+async function replay() {
+  if (!token) return;
+  try {
+    if (!previewUrl) await prefetchPromise;
+    audio.currentTime = 0;
+    await playWhenReady();
+  } catch (e) {
+    await playClip();
+  }
+}
+
+playBtn.addEventListener("click", playClip);
+replayBtn.addEventListener("click", replay);
+if (!code) setStatus("חסר קוד · Missing code", true);
+else if (!token) setStatus("קוד לא מוכר · Unknown code", true);
+</script>
+</body>
+</html>
