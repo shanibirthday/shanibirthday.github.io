@@ -312,6 +312,48 @@
     line-height: 1.3;
     text-shadow: 0 0 22px rgba(243,197,107,.35), 0 6px 18px rgba(0,0,0,.28);
   }
+  .home-start {
+    margin-top: 22px;
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    padding: 14px 26px;
+    font: inherit;
+    font-size: clamp(1.05rem, 4.4vw, 1.18rem);
+    font-weight: 800;
+    color: #14262a;
+    background: linear-gradient(180deg, #fffdf8, #efe3c8);
+    box-shadow: 0 10px 24px rgba(0,0,0,.25), 0 0 0 5px rgba(243,197,107,.2);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .home-start:active { transform: scale(.97); }
+  .home-start[hidden] { display: none !important; }
+  .home-mute {
+    position: fixed;
+    z-index: 6;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    inset-inline-start: 16px;
+    width: 46px;
+    height: 46px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,.12);
+    color: var(--ink);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 8px 20px rgba(0,0,0,.22);
+    touch-action: manipulation;
+  }
+  .home-mute:active { transform: scale(.96); }
+  .home-mute svg { width: 22px; height: 22px; display: block; }
+  .home-mute .icon-off { display: none; }
+  .home-mute.is-muted .icon-on { display: none; }
+  .home-mute.is-muted .icon-off { display: block; }
+  html.no-code #home, html.home-mode #home { padding-bottom: 72px; }
   @media (prefers-reduced-motion: reduce) {
     .home-vinyl { animation: none; }
   }
@@ -330,6 +372,15 @@
       <p>מנחשים בת כמה שני הייתה כשהתחילה לשמוע את השיר הזה — והיא תגלה את התשובה.</p>
       <p class="cta">מוכנים להתחיל??</p>
     </div>
+    <button type="button" id="homeStart" class="home-start" dir="rtl">הקישו להתחלה 🎶</button>
+    <button type="button" id="homeMute" class="home-mute" dir="rtl" aria-label="השתק" aria-pressed="false">
+      <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a8 8 0 0 1 0 12"/>
+      </svg>
+      <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/>
+      </svg>
+    </button>
   </section>
   <div id="player">
   <canvas id="confetti"></canvas>
@@ -767,6 +818,143 @@ if (isPlayer) {
   playBtn.addEventListener("click", playClip);
   replayBtn.addEventListener("click", replay);
 }
+
+function startHomeMusic() {
+  const DEEZER_ID = "2314455";
+  const ITUNES_ID = "1440821356";
+  const startBtn = document.getElementById("homeStart");
+  const muteBtn = document.getElementById("homeMute");
+  const homeAudio = new Audio();
+  homeAudio.preload = "auto";
+  homeAudio.loop = true;
+  homeAudio.volume = 0.62;
+  homeAudio.playsInline = true;
+  homeAudio.setAttribute("playsinline", "");
+  homeAudio.setAttribute("webkit-playsinline", "");
+  let homeUrl = "";
+  let provider = "";
+  let started = false;
+  let stopped = false;
+  let homeCtx = null;
+
+  function updateMuteUI() {
+    if (!muteBtn) return;
+    const on = !!homeAudio.muted;
+    muteBtn.classList.toggle("is-muted", on);
+    muteBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    muteBtn.setAttribute("aria-label", on ? "בטל השתקה" : "השתק");
+  }
+
+  function hideStart() {
+    const btn = startBtn || document.getElementById("homeStart");
+    if (btn) {
+      btn.hidden = true;
+      btn.setAttribute("hidden", "");
+    }
+  }
+
+  function stopHomeMusic() {
+    if (stopped) return;
+    stopped = true;
+    try { homeAudio.pause(); } catch (e) {}
+    try { homeAudio.removeAttribute("src"); homeAudio.load(); } catch (e) {}
+    document.removeEventListener("pointerdown", onFirstGesture, true);
+    started = false;
+    hideStart();
+  }
+
+  function unlockHome() {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) {
+        homeCtx = homeCtx || new AC();
+        if (homeCtx.state === "suspended") homeCtx.resume();
+      }
+    } catch (e) {}
+  }
+
+  function onPlaying() {
+    if (stopped) return;
+    started = true;
+    hideStart();
+  }
+
+  function tryPlay() {
+    if (stopped || !homeUrl) return Promise.resolve();
+    unlockHome();
+    const p = homeAudio.play();
+    if (p && p.then) return p.then(function () { onPlaying(); }).catch(function () {});
+    if (!homeAudio.paused) onPlaying();
+    return Promise.resolve();
+  }
+
+  function onFirstGesture(e) {
+    if (stopped || started) return;
+    if (e && e.target && e.target.closest && e.target.closest("#homeMute")) return;
+    tryPlay();
+  }
+
+  homeAudio.addEventListener("play", onPlaying);
+  homeAudio.addEventListener("playing", onPlaying);
+  homeAudio.addEventListener("ended", function () {
+    if (stopped) return;
+    try { homeAudio.currentTime = 0; } catch (e) {}
+    tryPlay();
+  });
+
+  if (startBtn) startBtn.addEventListener("click", function (e) { e.stopPropagation(); tryPlay(); });
+  if (muteBtn) muteBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    homeAudio.muted = !homeAudio.muted;
+    updateMuteUI();
+  });
+  updateMuteUI();
+  document.addEventListener("pointerdown", onFirstGesture, true);
+  window.addEventListener("pagehide", stopHomeMusic);
+  window.addEventListener("popstate", function () {
+    const c = (new URLSearchParams(location.search).get("c") || "").trim();
+    if (c && TRACKS[c]) stopHomeMusic();
+  });
+
+  async function fetchHomePreview() {
+    try {
+      const data = await jsonp("https://api.deezer.com/track/" + DEEZER_ID + "?output=jsonp");
+      if (data && !data.error && data.preview) {
+        provider = "deezer";
+        return data.preview;
+      }
+    } catch (e) {}
+    const data = await jsonp("https://itunes.apple.com/lookup?id=" + ITUNES_ID);
+    const row = data && data.results && data.results[0];
+    if (!row || !row.previewUrl) throw new Error("noprev");
+    provider = "itunes";
+    return row.previewUrl;
+  }
+
+  window.__homeMusic = {
+    deezerId: DEEZER_ID,
+    itunesId: ITUNES_ID,
+    get url() { return homeUrl; },
+    get provider() { return provider; },
+    get playing() { return !stopped && !homeAudio.paused && !homeAudio.ended; },
+    get muted() { return !!homeAudio.muted; },
+    get loop() { return !!homeAudio.loop; },
+    stop: stopHomeMusic
+  };
+
+  (async () => {
+    try {
+      const url = await fetchHomePreview();
+      if (stopped) return;
+      homeUrl = url;
+      homeAudio.src = url;
+      try { homeAudio.preload = "auto"; } catch (e) {}
+      tryPlay();
+    } catch (e) {}
+  })();
+}
+
+if (!isPlayer) startHomeMusic();
 </script>
 </body>
 </html>
