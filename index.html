@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Shani's Birthday</title>
+<title>Shanister</title>
 <meta name="description" content="Happy Birthday Shani">
-<meta property="og:title" content="Shani's Birthday">
+<meta property="og:title" content="Shanister">
 <meta property="og:description" content="Happy Birthday Shani">
 <meta property="og:type" content="website">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Play">
+<meta name="apple-mobile-web-app-title" content="Shanister">
 <meta name="theme-color" content="#08111c">
 <script>
 (function () {
@@ -259,19 +259,37 @@
   .home-title {
     margin: 0;
     text-align: center;
-    font-size: clamp(2.05rem, 9.2vw, 2.65rem);
+    font-size: clamp(2.45rem, 11vw, 3.05rem);
     font-weight: 800;
-    letter-spacing: -.03em;
-    line-height: 1.12;
+    letter-spacing: -.04em;
+    line-height: 1.05;
     color: #fffaf3;
     text-shadow: 0 8px 30px rgba(0,0,0,.28), 0 0 40px rgba(243,197,107,.18);
   }
+  .home-game {
+    margin: 8px 0 0;
+    text-align: center;
+    font-size: clamp(1.02rem, 4.3vw, 1.2rem);
+    font-weight: 600;
+    letter-spacing: -.01em;
+    color: #fffaf3;
+  }
   .home-sub {
-    margin: 10px 0 0;
+    margin: 6px 0 0;
     text-align: center;
     font-size: clamp(1.02rem, 4.2vw, 1.18rem);
     font-weight: 500;
     color: var(--gold);
+  }
+  #player .brand {
+    margin: 0 0 12px;
+    text-align: center;
+    font-size: clamp(1.45rem, 6.5vw, 1.85rem);
+    font-weight: 800;
+    letter-spacing: -.03em;
+    line-height: 1.1;
+    color: #fffaf3;
+    text-shadow: 0 8px 30px rgba(0,0,0,.25), 0 0 40px rgba(243,197,107,.18);
   }
   .rules {
     margin: 26px 0 0;
@@ -363,7 +381,8 @@
   <canvas id="fireworks" aria-hidden="true"></canvas>
   <section id="home" lang="he">
     <div class="vinyl home-vinyl" aria-hidden="true"></div>
-    <h1 class="home-title">Shani's Birthday Game</h1>
+    <h1 class="home-title">Shanister</h1>
+    <p class="home-game">Shani's Birthday Game</p>
     <p class="home-sub" lang="he" dir="rtl">יום הולדת שמח שני 🎂</p>
     <div class="rules" dir="rtl">
       <h2>איך משחקים?</h2>
@@ -384,7 +403,7 @@
   </section>
   <div id="player">
   <canvas id="confetti"></canvas>
-  <div class="eyebrow">Shani's Birthday</div>
+  <div class="brand">Shanister</div>
   <div class="hero">
     <h1 lang="he" dir="rtl">יום הולדת שמח שני</h1>
     <p class="en">Happy Birthday Shani 🎂</p>
@@ -436,7 +455,7 @@ document.documentElement.classList.toggle("player-mode", isPlayer);
 document.documentElement.classList.toggle("home-mode", !isPlayer);
 document.documentElement.classList.remove("maybe-player", "no-code");
 if (!isPlayer) {
-  document.title = "Shani's Birthday Game";
+  document.title = "Shanister";
   startFireworks();
 }
 
