@@ -66,6 +66,51 @@
     margin: 0 0 16px;
   }
   .hero { text-align: center; margin-bottom: 28px; max-width: 22rem; }
+  html.player-mode .hero { margin-bottom: 12px; }
+  html.player-mode .brand { margin-bottom: 8px; }
+  html.player-mode .stage { width: min(64vw, 240px); }
+  html.player-mode .play { width: 112px; height: 112px; }
+  html.player-mode .row { margin-top: 14px; }
+  html.player-mode .status { margin-top: 10px; }
+  .prompt {
+    width: min(100%, 22rem);
+    margin: 0 0 14px;
+    padding: 12px 16px 11px;
+    border-radius: 18px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .prompt[hidden] { display: none !important; }
+  .prompt-icon {
+    font-size: 1.55rem;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .prompt-main {
+    margin: 0;
+    font-size: clamp(1.12rem, 5.1vw, 1.32rem);
+    font-weight: 800;
+    line-height: 1.45;
+  }
+  .prompt-sub {
+    margin: 8px 0 0;
+    font-size: clamp(.92rem, 4vw, 1.02rem);
+    font-weight: 650;
+    opacity: .92;
+  }
+  .prompt-sub[hidden] { display: none !important; }
+  .prompt-year {
+    color: #5eead4;
+    background: rgba(45,212,191,.16);
+    border: 1px solid rgba(45,212,191,.46);
+    box-shadow: 0 8px 22px rgba(13,148,136,.16);
+  }
+  .prompt-age {
+    color: #f9a8d4;
+    background: rgba(244,114,182,.16);
+    border: 1px solid rgba(244,114,182,.46);
+    box-shadow: 0 8px 22px rgba(236,72,153,.16);
+  }
   .hero h1 {
     margin: 0;
     font-size: clamp(1.7rem, 7.4vw, 2.15rem);
@@ -408,6 +453,11 @@
     <h1 lang="he" dir="rtl">יום הולדת שמח שני</h1>
     <p class="en">Happy Birthday Shani 🎂</p>
   </div>
+  <div id="prompt" class="prompt" hidden lang="he" dir="rtl">
+    <div class="prompt-icon" aria-hidden="true"></div>
+    <p class="prompt-main"></p>
+    <p class="prompt-sub" hidden></p>
+  </div>
   <div class="stage" id="stage">
     <div class="vinyl" aria-hidden="true"></div>
     <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
@@ -438,6 +488,7 @@
   <div class="hint">30s</div>
   </div>
 <script>
+const KIND = {"SRaT7":"y","rdorK":"y","4GLxY":"y","C7cnd":"y","6fUR9":"y","ggzQi":"y","7uqYK":"y","hwCHN":"y","tPVi9":"y","fw8cN":"y","DmByW":"y","v2pjG":"y","SMviB":"y","8pFPr":"y","SkLyX":"y","EPezo":"y","VVxAu":"y","ZQLXe":"y","83W9e":"y","4g5wz":"y","sgmCb":"y","SLpPT":"y","YFy3m":"y","GUCBs":"y","Qwkni":"y","nmi8h":"y","fJeE6":"y","tHLxz":"y","8fp8K":"y","gmrqa":"y","Qd8rJ":"y","FeQzM":"y","8ks4N":"y","xmjwt":"y","6QiXE":"y","LwDZd":"y","GzLRr":"y","c2TEA":"y","bF6Jr":"y","9WWmt":"y","ThpP7":"y","vXq5Z":"y","ARoNR":"y","BewRv":"y","JLrRT":"y","rnniW":"y","HHjW3":"y","WZFx7":"y","sSz5a":"y","R3PWr":"y","KpngA":"y","XiPuH":"y","jwcQo":"y","svHck":"y","Y6XPg":"y","f6kpk":"a","VTi4q":"y","K84n3":"y","6Xjsw":"y","pBcB5":"a","VpRba":"y","2HNFY":"y","6354V":"y","G9pz5":"y","3KKgc":"a","aM8tW":"y","LLH2m":"y","LnUzy":"y","BnEDW":"a","tSqyZ":"y","ZaFX9":"y","5gcme":"a","gevWJ":"y","xgw4M":"a","XmhMB":"y","i2Jqh":"a","67FsD":"a","544SZ":"a","VCiph":"a","dEwxV":"a","rGsJB":"y","Ps74k":"a","pzZZh":"y","HVEJj":"y","MKdWg":"y","XSAFr":"y","Zx4ig":"y","tynHM":"y","gTcDT":"y","4ndFu":"y","iofwu":"a","UfJVJ":"y","Reuhp":"y","qu3NB":"y","XxsFZ":"a","YPHC6":"y","kVHKy":"y","aJpTj":"y","dkNwX":"a","78SVZ":"a","TQYHi":"y","wEXb7":"a","9uZxG":"a","ecnht":"y","Scbii":"a","DyCRv":"y","AyN6d":"y","2842x":"y","29YSb":"y","yRr4i":"a","P8vY9":"y","TYsY7":"y","A7S73":"y","PHnkF":"a","53ChF":"y","nX5NP":"a","heDtc":"y","CmDqR":"a","oHfbF":"a","d2kno":"y","KAgNR":"a","CACb9":"a","ckihm":"y","tijxy":"y","Dej3c":"y","LCqSK":"y","iEwqb":"a","CqhGy":"y","mEmgk":"y","MVCHr":"y","6Q9sF":"a","ghKko":"y","B6KsV":"y","fQSkr":"y","nbg6M":"y","f65AB":"y","x8Xcu":"y","s3sRN":"y","PPatS":"a","yhfer":"y","Jy8Xj":"a","XzBuD":"y","p9nmz":"a","fL2xe":"y","rfnnt":"y","Sc2UD":"a","sUjGC":"y","7MmDJ":"y","obVqo":"y","MpKsA":"y","xKvUZ":"y","ybYT9":"y","x89b2":"y","pW6k8":"a","rDJ8L":"a","VGmoE":"y","E3FZC":"y","2SVYZ":"y","jGiLT":"a","xsV9C":"y","XTeq2":"y","u8bfq":"y","dgiXv":"y","NtBUP":"y","8vmjX":"a","3PAeH":"y","boFLu":"y","yXJkX":"y","XkH5J":"a","sJrc4":"a","ZYvdv":"y","fHLrR":"a","rf4nc":"y","jB2MV":"a","iUYQd":"y","W48Hp":"y","bqohu":"a","2W94m":"y","ZCWUV":"y","x2ZwC":"y","9LuTR":"y","EXkHz":"y","AKRfR":"a","vJytk":"a","vm4Vj":"a","pRVEy":"y","k8BQy":"y","Reeig":"y","3oQ9y":"y","iUrBS":"y","WedJV":"a","3B5kY":"a","7hYsC":"y","KAHCH":"y","W2QWg":"y","NUXr2":"y","hfRC7":"a","NbKMS":"y","U7Exw":"y","3BdoE":"y","M9CF5":"y","xNPks":"y","Q6NKj":"y","CNabn":"y","zMiVM":"y","V3hyh":"y","GTgFg":"y","ryvBz":"a","zAo2H":"y","BZac9":"y","Angot":"a","EKUBW":"y","d4q3Z":"a","mCKxw":"y","XnRj3":"a","D2np9":"a","JtDMq":"y","JyQxV":"a","jz2D7":"y","MGKMe":"y","XqHux":"a","jS9zM":"y","W9J7W":"y","FV7sD":"y","7utji":"a","5rcFV":"a","hpPhg":"a","LTtbU":"y","HWFsK":"a","aGWDW":"y","jpBo7":"a","gW3tQ":"a","NmDZE":"a","3o4Hm":"y","kCs3a":"a","AYB43":"y","k8fGE":"y","ZQMxW":"y","ouxtS":"y","vqx5s":"y","5fixp":"y","9KFFW":"a","Ajq57":"a","A79fe":"y","5BMJQ":"y","Qf7Ti":"y","35fCq":"y","CBXgA":"y","CvEuU":"y","7vUEB":"a","v5Ja3":"y","qiZrg":"y","3pbK3":"a","ZFfHV":"y","BdNSh":"a","KSuHZ":"y","GTczE":"a","HbvXg":"y","KQaA9":"y","Z6JQn":"y","LSxNe":"a","G7ExZ":"y","duNYn":"y","aWtiZ":"y","eTY4E":"y","nj7jx":"y","SRxQn":"y","nE6sd":"a","7B9jU":"y","7Cpnp":"a","cejR2":"y","LyDo9":"y","Exjmi":"y","7DjcP":"y","gNqes":"y","k2Xru":"a","Ld3BU":"a","cbBMS":"a","q7qiJ":"y","9aiV6":"y","A39Lc":"y","uLEVT":"a","gvHD8":"y","3D2tF":"y","iwWDX":"a","wpT3m":"y","szg2y":"y","apAH3":"a","xgvPr":"y","7uJZZ":"y","CRvYK":"y","Ko7Wj":"y","m8Sgy":"a","xstf5":"y","o8X8W":"a","vm3jX":"y","V64a2":"y","mH65W":"y","SpWwU":"a"};
 const TRACKS = {"SRaT7":"d736762852","rdorK":"d2191255777","4GLxY":"d1132731952","C7cnd":"d560937322","6fUR9":"d2191255807","ggzQi":"d2192941757","7uqYK":"d2191255877","hwCHN":"d608820","tPVi9":"d15210161","fw8cN":"d13132946","DmByW":"d2800862","v2pjG":"d691527862","SMviB":"d7216934","8pFPr":"d7216938","SkLyX":"d6075293","EPezo":"d1090508912","VVxAu":"d849698","ZQLXe":"d5167557","83W9e":"d2193471","4g5wz":"d912352","sgmCb":"d837920","SLpPT":"d3099009","YFy3m":"d83925031","GUCBs":"d736724542","Qwkni":"d1663983562","nmi8h":"d15626764","fJeE6":"d15587471","tHLxz":"d736724512","8fp8K":"d85586798","gmrqa":"d736764102","Qd8rJ":"d65638419","FeQzM":"d113218698","8ks4N":"d75779409","xmjwt":"d621192032","6QiXE":"d1510251382","LwDZd":"d88845663","GzLRr":"d4254346","c2TEA":"d621092012","bF6Jr":"d1615278762","9WWmt":"d60200391","ThpP7":"d1140884892","vXq5Z":"d92739388","ARoNR":"d550269982","BewRv":"i1610884007","JLrRT":"d117990118","rnniW":"d560840722","HHjW3":"d560840652","WZFx7":"d783258932","sSz5a":"d1053921842","R3PWr":"d79105477","KpngA":"d81342412","XiPuH":"d127698997","jwcQo":"d736761282","svHck":"d13975778","Y6XPg":"d830880","f6kpk":"d116348616","VTi4q":"d1680798827","K84n3":"d1761245817","6Xjsw":"d1109326","pBcB5":"d669120","VpRba":"d7473866","2HNFY":"d14640080","6354V":"d764920","G9pz5":"d134116940","3KKgc":"d1405841332","aM8tW":"d6581098","LLH2m":"d1445506692","LnUzy":"d145434430","BnEDW":"d2301122","tSqyZ":"d4952834","ZaFX9":"d549341372","5gcme":"d13131811","gevWJ":"d3091990","xgw4M":"d3586841","XmhMB":"d621205002","i2Jqh":"d4623157","67FsD":"d560504","544SZ":"d84791555","VCiph":"d8146779","dEwxV":"d6821060","rGsJB":"d15275128","Ps74k":"d670900","pzZZh":"d4234099","HVEJj":"d620746922","MKdWg":"d718097","XSAFr":"d733720432","Zx4ig":"d1653693922","tynHM":"d1985612677","gTcDT":"d2319296","4ndFu":"d2124276","iofwu":"d7590577","UfJVJ":"d84885585","Reuhp":"d2607667","qu3NB":"d86391911","XxsFZ":"d68095470","YPHC6":"d2641790182","kVHKy":"d1398921942","aJpTj":"d1562649","dkNwX":"d4162123","78SVZ":"d3923820","TQYHi":"d88423191","wEXb7":"d538693822","9uZxG":"d105281106","ecnht":"d904747","Scbii":"d1643712752","DyCRv":"d373925941","AyN6d":"d1660694242","2842x":"i320308531","29YSb":"d73638230","yRr4i":"d904696","P8vY9":"d91084411","TYsY7":"d14640079","A7S73":"d4307728","PHnkF":"d3875722","53ChF":"d400419002","nX5NP":"d927900","heDtc":"d3173745","CmDqR":"d475334082","oHfbF":"d1582154","d2kno":"d3474914041","KAgNR":"d1074434392","CACb9":"d109300764","ckihm":"d1866481967","tijxy":"d2237941157","Dej3c":"d2607675","LCqSK":"d684048","iEwqb":"d3166541","CqhGy":"d3607485","mEmgk":"d3169190","MVCHr":"d725235","6Q9sF":"d435837422","ghKko":"d12818309","B6KsV":"d506947752","fQSkr":"d92739396","nbg6M":"d540509042","f65AB":"d25323751","x8Xcu":"d95965912","s3sRN":"d1014816612","PPatS":"d12809317","yhfer":"d407643932","Jy8Xj":"d136168640","XzBuD":"d760429572","p9nmz":"d2174201587","fL2xe":"d1784610997","rfnnt":"d657816322","Sc2UD":"d6071038","sUjGC":"d560848172","7MmDJ":"d1241243232","obVqo":"d1040918","MpKsA":"d798973092","xKvUZ":"d10101839","ybYT9":"d74513898","x89b2":"d15435398","pW6k8":"d1030403","rDJ8L":"d3838467901","VGmoE":"d126368853","E3FZC":"d2606168","2SVYZ":"d3217360611","jGiLT":"d4192218","xsV9C":"d3750761902","XTeq2":"d3173749","u8bfq":"d84791581","dgiXv":"d1761480947","NtBUP":"d539193232","8vmjX":"d138539759","3PAeH":"d545938","boFLu":"d713030032","yXJkX":"d538693722","XkH5J":"d1559400","sJrc4":"d1136064","ZYvdv":"d608696302","fHLrR":"i1415198302","rf4nc":"d1793508247","jB2MV":"d13129881","iUYQd":"d536141692","W48Hp":"d1033711402","bqohu":"d71469184","2W94m":"d1121731192","ZCWUV":"d612006","x2ZwC":"d3166955","9LuTR":"d620812252","EXkHz":"d2530801451","AKRfR":"d966623","vJytk":"d3785931332","vm4Vj":"d404235892","pRVEy":"d2813004","k8BQy":"d1856616207","Reeig":"d2865741572","3oQ9y":"d15188933","iUrBS":"i1754031516","WedJV":"d970192","3B5kY":"d13788567","7hYsC":"d2043943","KAHCH":"d538709582","W2QWg":"d116348176","NUXr2":"d144389132","hfRC7":"d1771352017","NbKMS":"d829783","U7Exw":"d1115698432","3BdoE":"d608696402","M9CF5":"d1579787","xNPks":"d24271581","Q6NKj":"d732308812","CNabn":"d830099302","zMiVM":"d627134","V3hyh":"d116348212","GTgFg":"d1028134","ryvBz":"d68584634","zAo2H":"d6581084","BZac9":"d15586369","Angot":"d89760491","EKUBW":"d127699009","d4q3Z":"d6580968","mCKxw":"d73913666","XnRj3":"d2525863","D2np9":"d1040945","JtDMq":"d2525868","JyQxV":"d3616306","jz2D7":"d774817792","MGKMe":"d980115","XqHux":"d1113991","jS9zM":"d60725470","W9J7W":"d4709084","FV7sD":"d3788403772","7utji":"d361667781","5rcFV":"d3958362","hpPhg":"d116348378","LTtbU":"d690181","HWFsK":"d1793508177","aGWDW":"d14477354","jpBo7":"d6580946","gW3tQ":"d3844005691","NmDZE":"d765941","3o4Hm":"d3783010562","kCs3a":"d625765","AYB43":"d56890741","k8fGE":"d1131191","ZQMxW":"d3821908","ouxtS":"d3882658031","vqx5s":"d3475139191","5fixp":"d998966","9KFFW":"d124262714","Ajq57":"d5094211","A79fe":"d1700855247","5BMJQ":"d3607484","Qf7Ti":"d4359205322","35fCq":"d1033711352","CBXgA":"d5617957","CvEuU":"d4351552912","7vUEB":"d7453539","v5Ja3":"d2314412","qiZrg":"d107474516","3pbK3":"d378398071","ZFfHV":"d2572753642","BdNSh":"d719631","KSuHZ":"d97089706","GTczE":"d2526064","HbvXg":"d30301331","KQaA9":"d6581164","Z6JQn":"d2216644657","LSxNe":"d101941597","G7ExZ":"d2740770021","duNYn":"d2035069497","aWtiZ":"d677484","eTY4E":"d447073562","nj7jx":"d140307583","SRxQn":"d3782976412","nE6sd":"d1103312","7B9jU":"d540499072","7Cpnp":"d561855992","cejR2":"d1163924","LyDo9":"d68584691","Exjmi":"d114422258","7DjcP":"d542909862","gNqes":"d2301126","k2Xru":"i1675374302","Ld3BU":"d6581170","cbBMS":"d1444381112","q7qiJ":"d620747002","9aiV6":"d66789249","A39Lc":"d3844005561","uLEVT":"d15048957","gvHD8":"d718087","3D2tF":"d968745","iwWDX":"d3156285","wpT3m":"d3861719","szg2y":"d6580951","apAH3":"d5404452","xgvPr":"d104952372","7uJZZ":"d7523847","CRvYK":"d1711019","Ko7Wj":"d677475","m8Sgy":"d4242713","xstf5":"d3477754441","o8X8W":"d705100082","vm3jX":"d1163846","V64a2":"d943734102","mH65W":"d2525865","SpWwU":"d93329628"};
 const playBtn = document.getElementById("play");
 const replayBtn = document.getElementById("replay");
@@ -457,6 +508,25 @@ document.documentElement.classList.remove("maybe-player", "no-code");
 if (!isPlayer) {
   document.title = "Shanister";
   startFireworks();
+} else {
+  showGuessPrompt(KIND[code]);
+}
+
+function showGuessPrompt(kind) {
+  const el = document.getElementById("prompt");
+  if (!el || (kind !== "y" && kind !== "a")) return;
+  el.hidden = false;
+  el.classList.add(kind === "a" ? "prompt-age" : "prompt-year");
+  el.querySelector(".prompt-icon").textContent = kind === "a" ? "🎂" : "🎵";
+  el.querySelector(".prompt-main").textContent = kind === "a"
+    ? "נחשו: בת כמה הייתה שני כשהתחילה לשמוע את השיר הזה?"
+    : "נחשו: איזה שיר זה ומאיזו שנה?";
+  const sub = el.querySelector(".prompt-sub");
+  if (kind === "a") {
+    sub.hidden = false;
+    sub.textContent = "שני תגלה את התשובה";
+  }
+  window.__guess = { kind: kind, text: el.querySelector(".prompt-main").textContent, sub: sub.hidden ? "" : sub.textContent };
 }
 
 function startFireworks() {
