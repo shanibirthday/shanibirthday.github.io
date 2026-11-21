@@ -519,13 +519,9 @@ function showGuessPrompt(kind) {
   el.classList.add(kind === "a" ? "prompt-age" : "prompt-year");
   el.querySelector(".prompt-icon").textContent = kind === "a" ? "🎂" : "🎵";
   el.querySelector(".prompt-main").textContent = kind === "a"
-    ? "נחשו: בת כמה הייתה שני כשהתחילה לשמוע את השיר הזה?"
-    : "נחשו: איזה שיר זה ומאיזו שנה?";
+    ? "בת כמה הייתה שני כשהתחילה לשמוע את השיר הזה?"
+    : "איזה שיר זה ומאיזו שנה?";
   const sub = el.querySelector(".prompt-sub");
-  if (kind === "a") {
-    sub.hidden = false;
-    sub.textContent = "שני תגלה את התשובה";
-  }
   window.__guess = { kind: kind, text: el.querySelector(".prompt-main").textContent, sub: sub.hidden ? "" : sub.textContent };
 }
 
