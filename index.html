@@ -66,12 +66,6 @@
     margin: 0 0 16px;
   }
   .hero { text-align: center; margin-bottom: 28px; max-width: 22rem; }
-  html.player-mode .hero { margin-bottom: 12px; }
-  html.player-mode .brand { margin-bottom: 8px; }
-  html.player-mode .stage { width: min(64vw, 240px); }
-  html.player-mode .play { width: 112px; height: 112px; }
-  html.player-mode .row { margin-top: 14px; }
-  html.player-mode .status { margin-top: 10px; }
   .prompt {
     width: min(100%, 22rem);
     margin: 0 0 14px;
@@ -243,24 +237,46 @@
   }
   .status.error { color: #fecaca; font-size: 15px; font-weight: 700; }
   #playerAudio { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
-  .tap-play {
-    margin-top: 14px;
+  .play-caption {
+    margin: 8px 0 0;
+    font-size: clamp(.92rem, 2.3dvh, 1.08rem);
+    font-weight: 800;
+    color: var(--gold);
+    text-align: center;
+    letter-spacing: -.01em;
+    text-shadow: 0 4px 14px rgba(0,0,0,.35);
+  }
+  .play-caption[hidden] { display: none !important; }
+  .actions {
+    flex: 0 0 auto;
+    width: min(100%, 26rem);
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .action-btn {
     appearance: none;
     border: 0;
-    border-radius: 999px;
-    padding: 14px 26px;
+    border-radius: 16px;
+    padding: 12px 8px;
     font: inherit;
-    font-size: clamp(1.12rem, 4.8vw, 1.28rem);
+    font-size: clamp(.84rem, 2.3dvh, 1.02rem);
     font-weight: 800;
+    line-height: 1.25;
     color: #14262a;
     background: linear-gradient(180deg, #fffdf8, #efe3c8);
-    box-shadow: 0 10px 24px rgba(0,0,0,.25), 0 0 0 5px rgba(243,197,107,.3);
+    box-shadow: 0 8px 18px rgba(0,0,0,.22);
     cursor: pointer;
     touch-action: manipulation;
-    width: min(100%, 20rem);
   }
-  .tap-play:active { transform: scale(.97); }
-  .tap-play[hidden] { display: none !important; }
+  .action-btn:active { transform: scale(.97); }
+  #playerScan.action-btn {
+    box-shadow: 0 8px 18px rgba(0,0,0,.22), 0 0 0 2px rgba(45,212,191,.3);
+  }
+  #replay.action-btn {
+    box-shadow: 0 8px 18px rgba(0,0,0,.22), 0 0 0 2px rgba(243,197,107,.28);
+  }
   .hint {
     margin-top: 6px;
     font-size: 11px;
@@ -292,14 +308,106 @@
     position: relative;
     z-index: 2;
   }
+  html.player-mode,
+  html.maybe-player {
+    height: 100%;
+  }
+  html.player-mode body,
+  html.maybe-player body {
+    height: 100vh;
+    height: 100svh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100svh;
+    max-height: 100dvh;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    justify-content: stretch;
+    align-items: stretch;
+  }
   html.maybe-player #player, html.player-mode #player {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
+    height: 100%;
+    max-height: 100%;
+    box-sizing: border-box;
+    padding: calc(8px + env(safe-area-inset-top, 0px)) 16px calc(10px + env(safe-area-inset-bottom, 0px));
+    overflow: hidden;
     position: relative;
     z-index: 2;
   }
+  html.player-mode .player-top,
+  html.maybe-player .player-top {
+    flex: 0 0 auto;
+    text-align: center;
+    width: 100%;
+  }
+  html.player-mode .hero,
+  html.maybe-player .hero {
+    margin: 2px 0 0;
+    max-width: none;
+  }
+  html.player-mode .hero h1,
+  html.maybe-player .hero h1 {
+    font-size: clamp(.92rem, 2.6dvh, 1.15rem);
+    font-weight: 650;
+    line-height: 1.25;
+  }
+  html.player-mode .hero .en,
+  html.maybe-player .hero .en { display: none; }
+  html.player-mode .prompt,
+  html.maybe-player .prompt {
+    flex: 0 0 auto;
+    width: min(100%, 26rem);
+    margin: 8px 0 0;
+    padding: 8px 14px;
+  }
+  html.player-mode .prompt-icon,
+  html.maybe-player .prompt-icon {
+    font-size: clamp(1.05rem, 2.4dvh, 1.3rem);
+    margin-bottom: 3px;
+  }
+  html.player-mode .prompt-main,
+  html.maybe-player .prompt-main {
+    font-size: clamp(.95rem, 2.6dvh, 1.18rem);
+    line-height: 1.35;
+  }
+  html.player-mode .player-main,
+  html.maybe-player .player-main {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    width: 100%;
+  }
+  html.player-mode .stage,
+  html.maybe-player .stage {
+    width: clamp(132px, min(58vw, 34dvh), 230px);
+    margin: 0;
+  }
+  html.player-mode .play,
+  html.maybe-player .play {
+    width: 46%;
+    height: 46%;
+  }
+  html.player-mode .play svg,
+  html.maybe-player .play svg { width: 42%; height: 42%; }
+  html.player-mode .eq,
+  html.maybe-player .eq { width: 44%; height: 36%; }
+  html.player-mode .status,
+  html.maybe-player .status {
+    flex: 0 0 auto;
+    margin: 4px 0 0;
+    min-height: 0;
+    font-size: 13px;
+  }
+  html.player-mode .status:empty,
+  html.maybe-player .status:empty { display: none; }
   html.home-mode #player, html.no-code #player { display: none; }
   html.player-mode #home, html.maybe-player #home { display: none; }
   html.no-code body, html.home-mode body {
@@ -346,9 +454,9 @@
     color: var(--gold);
   }
   #player .brand {
-    margin: 0 0 12px;
+    margin: 0;
     text-align: center;
-    font-size: clamp(1.45rem, 6.5vw, 1.85rem);
+    font-size: clamp(1.15rem, 3.4dvh, 1.6rem);
     font-weight: 800;
     letter-spacing: -.03em;
     line-height: 1.1;
@@ -457,12 +565,6 @@
     width: min(100%, 22rem);
   }
   .scan-btn:active { transform: scale(.97); }
-  html.player-mode .scan-btn {
-    margin-top: 16px;
-    padding: 12px 22px;
-    font-size: clamp(1.02rem, 4.2vw, 1.12rem);
-    width: min(100%, 20rem);
-  }
   #scanner {
     position: fixed;
     inset: 0;
@@ -557,16 +659,19 @@
   </section>
   <div id="player">
   <canvas id="confetti"></canvas>
-  <div class="brand">Shanister</div>
-  <div class="hero">
-    <h1 lang="he" dir="rtl">יום הולדת שמח שני</h1>
-    <p class="en">Happy Birthday Shani 🎂</p>
-  </div>
+  <header class="player-top">
+    <div class="brand">Shanister</div>
+    <div class="hero">
+      <h1 lang="he" dir="rtl">יום הולדת שמח שני 🎂</h1>
+      <p class="en">Happy Birthday Shani 🎂</p>
+    </div>
+  </header>
   <div id="prompt" class="prompt" hidden lang="he" dir="rtl">
     <div class="prompt-icon" aria-hidden="true"></div>
     <p class="prompt-main"></p>
     <p class="prompt-sub" hidden></p>
   </div>
+  <div class="player-main">
   <div class="stage" id="stage">
     <div class="vinyl" aria-hidden="true"></div>
     <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
@@ -586,17 +691,13 @@
       <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
     </button>
   </div>
-  <button type="button" id="tapPlay" class="tap-play" hidden dir="rtl">▶️ לחצו לנגן</button>
-  <div class="row">
-    <button class="icon-btn" id="replay" type="button" aria-label="Replay / נגן שוב">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>
-      </svg>
-    </button>
+  <p id="playCaption" class="play-caption" hidden dir="rtl">לחצו לנגן</p>
   </div>
   <div class="status" id="status"></div>
-  <div class="hint">30s</div>
-  <button type="button" id="playerScan" class="scan-btn" dir="rtl">סרקו קלף 📷</button>
+  <div class="actions" dir="rtl">
+    <button type="button" id="playerScan" class="action-btn">📷 סרקו קלף הבא</button>
+    <button type="button" id="replay" class="action-btn">🔁 מההתחלה</button>
+  </div>
   </div>
   <div id="scanner" hidden>
     <video id="scannerVideo" autoplay muted playsinline webkit-playsinline></video>
@@ -901,9 +1002,11 @@ function isPreviewSrc() {
   try { return new URL(src).pathname === new URL(previewUrl).pathname; } catch (e) { return false; }
 }
 function showTapToPlay(on) {
-  const el = document.getElementById("tapPlay");
-  if (!el) return;
-  el.hidden = !on;
+  const el = document.getElementById("playCaption");
+  if (el) el.hidden = !on;
+  if (playBtn && !playBtn.classList.contains("playing")) {
+    playBtn.setAttribute("aria-label", on ? "לחצו לנגן" : "Play / נגן");
+  }
 }
 function showFetchError() {
   showTapToPlay(false);
@@ -1093,7 +1196,6 @@ function replay() {
 
 playBtn.addEventListener("click", playClip);
 replayBtn.addEventListener("click", replay);
-document.getElementById("tapPlay").addEventListener("click", playClip);
 
 function startHomeMusic() {
   const DEEZER_ID = "2314455";
