@@ -241,7 +241,26 @@
     color: var(--muted);
     text-align: center;
   }
-  .status.error { color: #fca5a5; }
+  .status.error { color: #fecaca; font-size: 15px; font-weight: 700; }
+  #playerAudio { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
+  .tap-play {
+    margin-top: 14px;
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    padding: 14px 26px;
+    font: inherit;
+    font-size: clamp(1.12rem, 4.8vw, 1.28rem);
+    font-weight: 800;
+    color: #14262a;
+    background: linear-gradient(180deg, #fffdf8, #efe3c8);
+    box-shadow: 0 10px 24px rgba(0,0,0,.25), 0 0 0 5px rgba(243,197,107,.3);
+    cursor: pointer;
+    touch-action: manipulation;
+    width: min(100%, 20rem);
+  }
+  .tap-play:active { transform: scale(.97); }
+  .tap-play[hidden] { display: none !important; }
   .hint {
     margin-top: 6px;
     font-size: 11px;
@@ -511,6 +530,7 @@
 </style>
 </head>
 <body>
+  <audio id="playerAudio" playsinline webkit-playsinline preload="auto"></audio>
   <canvas id="fireworks" aria-hidden="true"></canvas>
   <section id="home" lang="he">
     <div class="vinyl home-vinyl" aria-hidden="true"></div>
@@ -566,6 +586,7 @@
       <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
     </button>
   </div>
+  <button type="button" id="tapPlay" class="tap-play" hidden dir="rtl">▶️ לחצו לנגן</button>
   <div class="row">
     <button class="icon-btn" id="replay" type="button" aria-label="Replay / נגן שוב">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -796,11 +817,16 @@ function startFireworks() {
   };
 }
 
-const audio = new Audio();
+const audio = document.getElementById("playerAudio");
 audio.preload = "auto";
 audio.playsInline = true;
 audio.setAttribute("playsinline", "");
 audio.setAttribute("webkit-playsinline", "");
+audio.controls = false;
+audio.muted = false;
+audio.defaultMuted = false;
+audio.volume = 1;
+audio.loop = false;
 
 const timing = { nav: performance.now(), jsonpStart: 0, urlReady: 0, canplay: 0, playing: 0 };
 window.__timing = timing;
@@ -810,7 +836,7 @@ let previewUrl = "";
 let prefetchErr = null;
 let loading = false;
 let confettiDone = false;
-let audioCtx = null;
+let playWatch = 0;
 
 function setStatus(msg, isError) {
   statusEl.textContent = msg || "";
@@ -860,12 +886,46 @@ async function fetchPreview() {
   }
   throw new Error("bad");
 }
+function ensureLoud() {
+  try {
+    audio.muted = false;
+    audio.defaultMuted = false;
+    audio.volume = 1;
+  } catch (e) {}
+}
+function isPreviewSrc() {
+  if (!previewUrl) return false;
+  const src = audio.currentSrc || audio.src || "";
+  if (!src || src.indexOf("http") !== 0) return false;
+  if (src === previewUrl) return true;
+  try { return new URL(src).pathname === new URL(previewUrl).pathname; } catch (e) { return false; }
+}
+function showTapToPlay(on) {
+  const el = document.getElementById("tapPlay");
+  if (!el) return;
+  el.hidden = !on;
+}
+function showFetchError() {
+  showTapToPlay(false);
+  playBtn.classList.remove("ready", "playing", "loading");
+  setPlaying(false);
+  setStatus("לא ניתן לטעון את השיר. נסו שוב.", true);
+}
 function armAudio(url) {
+  if (!url || String(url).indexOf("http") !== 0) return;
   previewUrl = url;
+  ensureLoud();
+  audio.loop = false;
   if (audio.src !== url) audio.src = url;
   try { audio.preload = "auto"; audio.load(); } catch (e) {}
   if (!timing.urlReady) timing.urlReady = performance.now();
   playBtn.classList.add("ready");
+  playBtn.classList.remove("playing", "loading");
+  setPlaying(false);
+  if (isPlayer) {
+    showTapToPlay(true);
+    setStatus("");
+  }
 }
 let prefetchPromise = Promise.resolve("");
 let cardGen = 0;
@@ -882,6 +942,7 @@ function startPrefetch() {
     } catch (e) {
       if (gen !== cardGen) return "";
       prefetchErr = e;
+      if (isPlayer) showFetchError();
       throw e;
     }
   })();
@@ -890,13 +951,44 @@ function startPrefetch() {
 
 audio.addEventListener("canplay", () => { if (!timing.canplay) timing.canplay = performance.now(); });
 audio.addEventListener("canplaythrough", () => { if (!timing.canplay) timing.canplay = performance.now(); });
-audio.addEventListener("playing", () => { if (!timing.playing) timing.playing = performance.now(); });
+audio.addEventListener("playing", () => {
+  if (!isPlayer) return;
+  if (!timing.playing) timing.playing = performance.now();
+  ensureLoud();
+  if (!isPreviewSrc()) return;
+  showTapToPlay(false);
+  setStatus("");
+  burstConfetti();
+  const t0 = audio.currentTime;
+  if (playWatch) clearTimeout(playWatch);
+  playWatch = setTimeout(() => {
+    if (!isPlayer || audio.paused) return;
+    if (audio.currentTime > t0 + 0.04 || audio.currentTime > 0.05) setPlaying(true);
+    else { setPlaying(false); showTapToPlay(true); }
+  }, 350);
+});
 audio.addEventListener("timeupdate", () => {
+  if (!isPlayer) return;
   const d = audio.duration;
   if (d && isFinite(d)) setProgress(audio.currentTime / d);
+  if (!audio.paused && isPreviewSrc() && audio.currentTime > 0.05) {
+    setPlaying(true);
+    showTapToPlay(false);
+  }
 });
-audio.addEventListener("ended", () => { setPlaying(false); setProgress(1); });
-audio.addEventListener("pause", () => { if (!audio.ended) setPlaying(false); });
+audio.addEventListener("ended", () => {
+  if (!isPlayer) return;
+  setPlaying(false);
+  setProgress(1);
+  showTapToPlay(true);
+});
+audio.addEventListener("pause", () => {
+  if (!isPlayer) return;
+  if (!audio.ended) {
+    setPlaying(false);
+    if (previewUrl) showTapToPlay(true);
+  }
+});
 
 function burstConfetti() {
   if (confettiDone) return;
@@ -949,98 +1041,78 @@ function burstConfetti() {
   requestAnimationFrame(frame);
 }
 
-async function unlock() {
-  try {
-    const AC = window.AudioContext || window.webkitAudioContext;
-    if (AC) {
-      audioCtx = audioCtx || new AC();
-      if (audioCtx.state === "suspended") await audioCtx.resume();
-    }
-  } catch (e) {}
-}
-
-function playWhenReady() {
+function startPlayFromGesture() {
+  ensureLoud();
+  if (!previewUrl || !isPreviewSrc()) {
+    showTapToPlay(!!previewUrl);
+    return;
+  }
+  try { if (audio.ended) audio.currentTime = 0; } catch (e) {}
   const p = audio.play();
-  setPlaying(true);
-  setStatus("");
-  burstConfetti();
-  return p;
+  if (p && p.then) {
+    p.catch(function () {
+      setPlaying(false);
+      showTapToPlay(true);
+    });
+  }
 }
 
-async function playClip() {
+function playClip() {
   if (!token) { setStatus("חסר קוד · Missing code", true); return; }
-  if (loading) return;
-  if (previewUrl && !audio.paused && !audio.ended) {
+  if (previewUrl && isPreviewSrc() && !audio.paused && !audio.ended) {
     audio.pause();
-    setPlaying(false);
     return;
   }
-  // Fast path: preview already armed — start audio in this tap, no await first.
-  if (previewUrl && audio.src && audio.src.indexOf("http") === 0 && !audio.ended) {
-    Promise.resolve(playWhenReady()).catch(() => { setPlaying(false); setStatus("לא ניתן לנגן · Can't play", true); });
+  if (previewUrl && isPreviewSrc()) {
+    startPlayFromGesture();
     return;
   }
-  if (previewUrl && audio.ended) {
-    audio.currentTime = 0;
-    Promise.resolve(playWhenReady()).catch(() => { setPlaying(false); setStatus("לא ניתן לנגן · Can't play", true); });
-    return;
-  }
-  loading = true;
+  if (prefetchErr) { showFetchError(); return; }
   playBtn.classList.add("loading");
   setStatus("…");
-  try {
-    await unlock();
-    if (!previewUrl) {
-      const url = await prefetchPromise.catch(() => fetchPreview());
-      armAudio(url);
-    } else if (audio.ended) {
-      audio.currentTime = 0;
-    }
-    await playWhenReady();
-  } catch (e) {
-    setPlaying(false);
-    setStatus("לא ניתן לנגן · Can't play", true);
-  } finally {
-    loading = false;
+  showTapToPlay(false);
+  prefetchPromise.then(function (url) {
     playBtn.classList.remove("loading");
-  }
+    if (url) { armAudio(url); showTapToPlay(true); setStatus(""); }
+    else showFetchError();
+  }).catch(function () {
+    playBtn.classList.remove("loading");
+    showFetchError();
+  });
 }
 
-async function replay() {
+function replay() {
   if (!token) return;
-  try {
-    if (!previewUrl) await prefetchPromise;
-    audio.currentTime = 0;
-    await playWhenReady();
-  } catch (e) {
-    await playClip();
+  if (previewUrl && isPreviewSrc()) {
+    try { audio.currentTime = 0; } catch (e) {}
+    startPlayFromGesture();
+    return;
   }
+  playClip();
 }
 
 playBtn.addEventListener("click", playClip);
 replayBtn.addEventListener("click", replay);
+document.getElementById("tapPlay").addEventListener("click", playClip);
 
 function startHomeMusic() {
   const DEEZER_ID = "2314455";
   const ITUNES_ID = "1440821356";
   const startBtn = document.getElementById("homeStart");
   const muteBtn = document.getElementById("homeMute");
-  const homeAudio = new Audio();
-  homeAudio.preload = "auto";
-  homeAudio.loop = true;
-  homeAudio.volume = 0.62;
-  homeAudio.playsInline = true;
-  homeAudio.setAttribute("playsinline", "");
-  homeAudio.setAttribute("webkit-playsinline", "");
+  audio.preload = "auto";
+  audio.loop = true;
+  audio.volume = 0.62;
+  audio.muted = false;
+  audio.defaultMuted = false;
   let homeUrl = "";
   let provider = "";
   let started = false;
   let stopped = false;
-  let homeCtx = null;
 
   function updateMuteUI() {
     if (!muteBtn) return;
-    const on = !!homeAudio.muted;
+    const on = !!audio.muted;
     muteBtn.classList.toggle("is-muted", on);
     muteBtn.setAttribute("aria-pressed", on ? "true" : "false");
     muteBtn.setAttribute("aria-label", on ? "בטל השתקה" : "השתק");
@@ -1060,8 +1132,10 @@ function startHomeMusic() {
     if (stopped) return;
     stopped = true;
     pausedForScan = false;
-    try { homeAudio.pause(); } catch (e) {}
-    try { homeAudio.removeAttribute("src"); homeAudio.load(); } catch (e) {}
+    try { audio.pause(); } catch (e) {}
+    try { audio.loop = false; } catch (e) {}
+    try { audio.removeAttribute("src"); audio.load(); } catch (e) {}
+    ensureLoud();
     document.removeEventListener("pointerdown", onFirstGesture, true);
     started = false;
     hideStart();
@@ -1069,8 +1143,8 @@ function startHomeMusic() {
 
   function pauseHomeMusic() {
     if (stopped) return;
-    if (!homeAudio.paused) pausedForScan = true;
-    try { homeAudio.pause(); } catch (e) {}
+    if (!audio.paused) pausedForScan = true;
+    try { audio.pause(); } catch (e) {}
   }
 
   function resumeHomeMusic() {
@@ -1079,28 +1153,19 @@ function startHomeMusic() {
     tryPlay();
   }
 
-  function unlockHome() {
-    try {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (AC) {
-        homeCtx = homeCtx || new AC();
-        if (homeCtx.state === "suspended") homeCtx.resume();
-      }
-    } catch (e) {}
-  }
-
   function onPlaying() {
-    if (stopped) return;
+    if (stopped || isPlayer) return;
     started = true;
     hideStart();
   }
 
   function tryPlay() {
-    if (stopped || !homeUrl) return Promise.resolve();
-    unlockHome();
-    const p = homeAudio.play();
+    if (stopped || isPlayer || !homeUrl) return Promise.resolve();
+    audio.loop = true;
+    audio.volume = 0.62;
+    const p = audio.play();
     if (p && p.then) return p.then(function () { onPlaying(); }).catch(function () {});
-    if (!homeAudio.paused) onPlaying();
+    if (!audio.paused) onPlaying();
     return Promise.resolve();
   }
 
@@ -1110,18 +1175,18 @@ function startHomeMusic() {
     tryPlay();
   }
 
-  homeAudio.addEventListener("play", onPlaying);
-  homeAudio.addEventListener("playing", onPlaying);
-  homeAudio.addEventListener("ended", function () {
-    if (stopped) return;
-    try { homeAudio.currentTime = 0; } catch (e) {}
+  audio.addEventListener("play", onPlaying);
+  audio.addEventListener("playing", onPlaying);
+  audio.addEventListener("ended", function () {
+    if (stopped || isPlayer) return;
+    try { audio.currentTime = 0; } catch (e) {}
     tryPlay();
   });
 
   if (startBtn) startBtn.addEventListener("click", function (e) { e.stopPropagation(); tryPlay(); });
   if (muteBtn) muteBtn.addEventListener("click", function (e) {
     e.stopPropagation();
-    homeAudio.muted = !homeAudio.muted;
+    audio.muted = !audio.muted;
     updateMuteUI();
   });
   updateMuteUI();
@@ -1152,9 +1217,9 @@ function startHomeMusic() {
     itunesId: ITUNES_ID,
     get url() { return homeUrl; },
     get provider() { return provider; },
-    get playing() { return !stopped && !homeAudio.paused && !homeAudio.ended; },
-    get muted() { return !!homeAudio.muted; },
-    get loop() { return !!homeAudio.loop; },
+    get playing() { return !stopped && !audio.paused && !audio.ended; },
+    get muted() { return !!audio.muted; },
+    get loop() { return !!audio.loop; },
     stop: stopHomeMusic,
     pause: pauseHomeMusic,
     resume: resumeHomeMusic
@@ -1165,15 +1230,14 @@ function startHomeMusic() {
       const url = await fetchHomePreview();
       if (stopped) return;
       homeUrl = url;
-      homeAudio.src = url;
-      try { homeAudio.preload = "auto"; } catch (e) {}
+      audio.src = url;
+      try { audio.preload = "auto"; } catch (e) {}
       tryPlay();
     } catch (e) {}
   })();
 }
 
 
-const SILENT_WAV = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
 let mediaStream = null;
 let scanRaf = 0;
 let scanning = false;
@@ -1182,25 +1246,6 @@ let detectMode = "";
 let scanCanvas = null;
 let scanCtx = null;
 let scanAccepting = true;
-
-function primePlayback() {
-  unlock();
-  try {
-    if (!audio.getAttribute("src") && !audio.src) {
-      audio.src = SILENT_WAV;
-    }
-    const wasMuted = audio.muted;
-    audio.muted = true;
-    const p = audio.play();
-    const finish = function () {
-      try { audio.pause(); } catch (e) {}
-      audio.muted = wasMuted;
-      try { if (audio.src.indexOf("data:audio/wav") === 0) audio.currentTime = 0; } catch (e) {}
-    };
-    if (p && p.then) p.then(finish).catch(function () { audio.muted = wasMuted; });
-    else finish();
-  } catch (e) {}
-}
 
 function stopCurrentSong() {
   try { audio.pause(); } catch (e) {}
@@ -1213,12 +1258,15 @@ function resetClip() {
   prefetchErr = null;
   confettiDone = false;
   cardGen += 1;
+  if (playWatch) clearTimeout(playWatch);
   try { audio.pause(); } catch (e) {}
-  try { audio.removeAttribute("src"); audio.load(); } catch (e) {}
+  try { audio.loop = false; audio.removeAttribute("src"); audio.load(); } catch (e) {}
+  ensureLoud();
   playBtn.classList.remove("playing", "ready", "loading");
   setPlaying(false);
   setProgress(0);
   setStatus("");
+  showTapToPlay(false);
 }
 
 function setScannerMsg(msg, isError) {
@@ -1243,23 +1291,6 @@ function extractCode(raw) {
   return "";
 }
 
-async function tryAutoPlay() {
-  try {
-    await unlock();
-    if (!previewUrl) {
-      const url = await prefetchPromise.catch(function () { return fetchPreview(); });
-      if (url) armAudio(url);
-    }
-    if (!previewUrl) return;
-    if (audio.ended) audio.currentTime = 0;
-    await playWhenReady();
-  } catch (e) {
-    setPlaying(false);
-    setStatus("");
-    playBtn.classList.add("ready");
-  }
-}
-
 function activateCard(nextCode) {
   const nextToken = TRACKS[nextCode];
   if (!nextToken) return false;
@@ -1276,8 +1307,8 @@ function activateCard(nextCode) {
   if (window.__stopFireworks) window.__stopFireworks();
   showGuessPrompt(KIND[code]);
   resetClip();
+  ensureLoud();
   startPrefetch();
-  tryAutoPlay();
   return true;
 }
 
@@ -1378,7 +1409,6 @@ async function scanTick() {
 }
 
 async function openScanner() {
-  primePlayback();
   stopCurrentSong();
   if (window.__homeMusic && window.__homeMusic.pause) window.__homeMusic.pause();
   const overlay = document.getElementById("scanner");
@@ -1441,7 +1471,6 @@ function closeScanner(opts) {
 
 function onScanTap(e) {
   if (e) { e.preventDefault(); e.stopPropagation(); }
-  primePlayback();
   openScanner();
 }
 
